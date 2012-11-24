@@ -4,6 +4,10 @@
 <meta charset="UTF-8" />
 	<title>HTML Media Capture</title>
 	<script>
+	document.addEventListener("deviceready", onDeviceReady, false);
+	function onDeviceReady() {
+		handleCapture;
+	}
 	//function to handle HTML media capture of a file
 	function handleCapture(files) {
 	var imageType =  /image.*/;
@@ -26,7 +30,7 @@
 					newImg.style.maxWidth = "100px";
 					
 				//apend the new image element to the thumbnails area
-					var thumbnails = preview.appandChild(newImg);
+					var thumbnails = preview.appendChild(newImg);
 					
 				//load the image element with the contents of the file
 				var reader = new FileReader();
@@ -43,7 +47,7 @@
 <body>
 	<h2>Media Capture - Camera</h2>
 	<input type="file" accept="image/*;capture=camera" capture="camera"
-		onChange="hanldeCapture(this.files)"></input>
+		onChange="handleCapture(this.files)"></input>
 		
 	<div id="thumbnails"></div>
 </body>
