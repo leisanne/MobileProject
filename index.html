@@ -1,55 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8" />
-	<title>HTML Media Capture</title>
-	<script>
-	document.addEventListener("deviceready", onDeviceReady, false);
-	function onDeviceReady() {
-		handleCapture;
-	}
-	//function to handle HTML media capture of a file
-	function handleCapture(files) {
-	var imageType =  /image.*/;
-	
-	//we expect only one picture at a time but loop through any files provided
-		for (var i = 0; i < files.length; i++) {
-		
-			//retrieve the file from those passed in  
-			var file = files[i];
-			
-			//check if the file is an image type
-			if (file.type.match(imageType)) {
-			
-				//create our new image element
-					var newImg = document.createElement("img");
-					
-					newImg.classList.add("obj");
-					newImg.file = file;
-					newImg.style.maxHeight = "100px";
-					newImg.style.maxWidth = "100px";
-					
-				//apend the new image element to the thumbnails area
-					var thumbnails = preview.appendChild(newImg);
-					
-				//load the image element with the contents of the file
-				var reader = new FileReader();
-				reader.onload = (function(aImag){
-					return function(e) {
-						aImg.src = e.target.result; };
-						}) (newImg);
-						reader.readAsDataURL(file);
-					}
-				}
+	<head>
+		<title>Capture Photo</title>
+		<script type="text/javascript" charset="utf-8" src="PhoneGap.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var pictureSource, destinationType
+			document.addEventListener("deviceready",loaded,false);
+			function loaded(){
+				pictureSource=navigator.camera.PictureSourceType;
+				destinationType=navigator.camera.DestinationType;
 			}
-		</script>
-</head>
-<body>
-	<h2>Media Capture - Camera</h2>
-	<input type="file" accept="image/*;capture=camera" capture="camera"
-		onChange="handleCapture(this.files)"></input>
-		
-	<div id="thumbnails"></div>
-</body>
-</html>
-					
+			function getPhoto(imageData){
+				var smallImage=document.getElementById('smallImage');
+				smallImage.style.display='block';
+				smallImage.style.visibility='visible';
+				smallImage.src="data:image/jpeg;base64," + imageData;
+			}
+			function capturePhoto(){
+				navigator.camera.getPicture(getPhoto, onFail, {quality:50});
+			}
+			function onFail(message){
+				alert('Failed because: ' + message);
+			}
+			</script>
+		</head>
+		<body>
+			<button onclick="capturePhoto();">Capture Photo</button> <br>
+			<img style="display:none;width:60px;height:60px;"id="smallImage" src="" />
+		</body>
+	</html>
