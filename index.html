@@ -1,31 +1,81 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Capture Photo</title>
-		<script type="text/javascript" charset="utf-8" src="PhoneGap.js"></script>
+		<title>PhoneGap Contribution</title>
+		<!--capture photo-->
+		<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1" />
+		<script type="text/javascript" charset="utf-8" src="js/phonegap.js"></script>
+		<!--script for capturing a picture with camera-->
 		<script type="text/javascript" charset="utf-8">
-			var pictureSource, destinationType
-			document.addEventListener("deviceready",loaded,false);
-			function loaded(){
+			var pictureSource; //picture source
+			var destinationType; //set the format of returned value
+			
+			//wait for phonegap to connect with the device
+			document.addEventListener("deviceready",onDeviceReady,false);
+			
+			
+			function onDeviceReady(){
 				pictureSource=navigator.camera.PictureSourceType;
 				destinationType=navigator.camera.DestinationType;
 			}
-			function getPhoto(imageData){
-				var smallImage=document.getElementById('smallImage');
+			//called when a photo is successfully retrieved
+			function onPhotoDataSuccess(imageData){
+				var smallImage = document.getElementById('smallImage');
+				
 				smallImage.style.display='block';
-				smallImage.style.visibility='visible';
+				
+				//show the captured photo
 				smallImage.src="data:image/jpeg;base64," + imageData;
 			}
-			function capturePhoto(){
-				navigator.camera.getPicture(getPhoto, onFail, {quality:50});
+			
+			//called when a photo is successfully retrieved
+			function onPhoneFileSuccess(imageData){
+				console.log(JSON.stringify(imageData));
+			
+				var smallImage = document.getElementById('smallImage');
+				smallImage.style.display = 'block';
+			
+			//show the captured photo
+				smallImage.src = imageData;
 			}
+			
+			function onPhotoURISuccess(imageURI) {
+				var largeImage = document.getElementById('largeImage');
+				largeImage.style..display = 'block';
+				
+				//show the captured photo
+				largeImage.src = imageURI;
+			}
+			
+			function capturePhotoWithData() {
+				//take picture using device camera and retrieve image as base64-encoded string
+				navigator.camera.getPicture(onPhotoDataSuccess, onFail, {quality:50});
+			}
+			
+			
+			function capturePhotoWithFile() {
+				navigator.camera.getPicture(onPhotoFileSuccess, onFail, {quality: 50, destinationType:Camera.DestinationType.FILE_URI });
+			}
+			
+			function getPhoto(source) {
+				//retrieve image file location from specified source
+				navigator.camera.getPicture(onPhotoURISuccess, onFail, {quality: 50, destinationType: destinationType.FILE_URI, sourceType:source });
+			}
+			//called is something bad happends
 			function onFail(message){
 				alert('Failed because: ' + message);
 			}
 			</script>
+			<script>
+			
 		</head>
 		<body>
-			<button onclick="capturePhoto();">Capture Photo</button> <br>
-			<img style="display:none;width:60px;height:60px;"id="smallImage" src="" />
+			<button onclick="capturePhotoWithData();">Capture Photo With Image Data</button> <br>
+			<button onclick="capturePhotoWithFile();">Capture Photo with Image File</button> <br>
+			<button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button> <br>
+			<button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button> <br>
+			
+			<img style="display:none;width:60px;height:60px;" id="smallImage src="" />
+			<img style="diplay:none;" id="largeImage" src="" />
 		</body>
 	</html>
